@@ -1,0 +1,12 @@
+/x64
+/packages
+/test/pdf-test.vcxproj.user
+/test/x64
+/test/pdf-test.vcxproj.filters
+/cs/bin
+/cs/obj
+/cpp/pdf-shell32.vcxproj.user
+/cpp/.vs
+/cpp/x64
+/cpp/pdf-shell32.vcxproj.filters
+/.vs
