@@ -25,7 +25,7 @@ bool isValidFileName(string_t);
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
         case DLL_PROCESS_ATTACH:
-            GetModuleFileName(hModule, module, ARRAYSIZE(module) - 1);
+;           GetModuleFileName(hModule, module, ARRAYSIZE(module) - 1);
             iTextSharpWrapperDll = utils::io::path::combine(utils::io::path::GetDirectoryPath(module), ITEXTSHARP_WRAPPER);
             utils::shell32::menuItemDisplayText = MENU_ITEM_DISPLAY_TEXT;
             utils::shell32::init(hModule,
@@ -47,7 +47,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
                         auto index = 0;
                         for (auto& file : files) {
                             if (isValidFileName(file)) {
-                                imageFiles[index++] = utils::strings::t2s(file);
+                                imageFiles[index++] = utils::strings::t2utf8(file);
                             }
                         }
                         auto imageDirectory = utils::io::path::GetDirectoryPath(files[0]);
@@ -55,10 +55,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
                         auto pdfFilePath = utils::io::path::combine(imageDirectory, fileName) + _T(".pdf");
                         auto json = Json::Value();
                         json["imageFiles"] = imageFiles;
-                        json["pdfFilePath"] = utils::strings::t2s(pdfFilePath);
-                        std::async(std::launch::async, &utils::dotnet::clr::invoke,
+                        json["pdfFilePath"] = utils::strings::t2utf8(pdfFilePath);
+                        auto dump = json.toStyledString();
+                        auto _ = std::async(std::launch::async, &utils::dotnet::clr::invoke,
                             iTextSharpWrapperDll, ITEXTSHARP_WRAPPER_CLASS, ITEXTSHARP_WRAPPER_METHOD,
-                            utils::strings::GetBuffer(utils::strings::t2t(json.toStyledString())));
+                            utils::strings::GetBuffer(utils::strings::t2t(dump)));
                     }
                 }
             }, IDB_UNWITTING_LIFE);
