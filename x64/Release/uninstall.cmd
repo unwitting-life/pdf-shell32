@@ -1,0 +1,1 @@
+regsvr32.exe /u pdf-shell32.dll
