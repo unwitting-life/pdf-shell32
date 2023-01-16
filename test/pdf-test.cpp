@@ -10,24 +10,28 @@
 
 int main() {
     setlocale(LC_ALL, "Chinese");
-    auto imageDirectory = _T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\01";
+    auto imageDirectory = _T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\TOUCH邻家美眉\\第01卷");
     auto imageFiles = Json::Value();
     auto index = 0;
-    for (auto& imageFile : utils::io::directory::files(imageDirectory))) {
+    auto imageFilePath = std::wstring();
+    for (auto& imageFile : utils::io::directory::files(imageDirectory)) {
         auto extensionName = utils::io::path::GetFileExtensionName(imageFile);
         if (utils::strings::equalsIgnoreCase(extensionName, _T(".webp")) ||
             utils::strings::equalsIgnoreCase(extensionName, _T(".jpeg")) ||
             utils::strings::equalsIgnoreCase(extensionName, _T(".png"))) {
-            imageFiles[index++] = utils::strings::t2s(imageFile);
+            if (imageFilePath.empty()) {
+                imageFilePath = imageFile;
+            }
+            imageFiles[index++] = utils::strings::t2utf8(imageFile);
         }
     }
-    auto pdfFilePath = utils::strings::t2s(utils::io::path::GetFileName(imageDirectory) + _T(".pdf"));
+    auto pdfFilePath = utils::io::path::combine(imageDirectory, utils::io::path::GetFileNameWithouExtension(imageFilePath)) + _T(".pdf");
     auto json = Json::Value();
     json["imageFiles"] = imageFiles;
-    json["pdfFilePath"] = pdfFilePath;
+    json["pdfFilePath"] = utils::strings::t2utf8(pdfFilePath);
     auto dump = utils::strings::t2t(json.toStyledString());
     utils::dotnet::clr::invoke(
-        _T("D:\\.sources\\github.com\\unwitting-life\\pdf-shell32\\.cs\\bin\\Release\\iTextSharpWrapper.dll"),
+        _T("iTextSharpWrapper.dll"),
         _T("iTextSharpWrapper.impl"),
         _T("invoke"),
         dump);

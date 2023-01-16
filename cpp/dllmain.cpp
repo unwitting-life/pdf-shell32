@@ -12,7 +12,7 @@ typedef int(*Count)(const wchar_t* str);
 typedef const wchar_t* (*Through)(const wchar_t* str);
 typedef const wchar_t* (*GetString)();
 
-constexpr auto MENU_ITEM_DISPLAY_TEXT = _T("MERGE to PDF");
+constexpr auto MENU_ITEM_DISPLAY_TEXT = _T("Image to PDF(A4)");
 
 auto ITEXTSHARP_WRAPPER = _T("iTextSharpWrapper.dll");
 auto ITEXTSHARP_WRAPPER_CLASS = _T("iTextSharpWrapper.impl");

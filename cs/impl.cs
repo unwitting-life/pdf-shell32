@@ -21,8 +21,8 @@ namespace iTextSharpWrapper {
             var retVal = 0;
             try {
                 retVal = invoke_(JsonConvert.DeserializeObject<args>(args));
-            } catch {
-
+            } catch (Exception ex) {
+                Debug.WriteLine(ex);
             }
             return retVal;
         }
@@ -30,7 +30,7 @@ namespace iTextSharpWrapper {
         // https://blog.csdn.net/lwkliuwenkang/article/details/128386143
         private static int invoke_(args args) {
             var retVal = 0;
-            if (args.imageFiles.Length > 0) {
+            if (args.imageFiles.Length > 0 && !string.IsNullOrEmpty(args.pdfFilePath)) {
                 var pdfFilePath = args.pdfFilePath;
                 if (Path.GetFullPath(pdfFilePath) != pdfFilePath) {
                     pdfFilePath = Path.Combine(Path.GetDirectoryName(args.imageFiles[0]), Path.GetFileName(pdfFilePath));
@@ -42,31 +42,33 @@ namespace iTextSharpWrapper {
                     document.Open();
                     foreach (string imageFile in args.imageFiles) {
                         try {
+                            Bitmap bitmap = null;
                             Stream imageFileStream = null;
                             var extensionName = Path.GetExtension(imageFile);
                             if (extensionName.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
                                 extensionName.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
                                 extensionName.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
                                 extensionName.Equals(".tiff", StringComparison.OrdinalIgnoreCase)) {
-                                imageFileStream = new FileStream(imageFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                                bitmap = new Bitmap(imageFile);
                             } else if (extensionName.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
 
                                 // https://briancaos.wordpress.com/2022/08/29/c-convert-webp-to-jpeg-in-net/
-                                WebP webp = new WebP();
-                                Bitmap bitmap = webp.Load(imageFile);
+                                bitmap = new WebP().Load(imageFile);
+                            }
+                            if (bitmap != null) {
+                                if (bitmap.Width > bitmap.Height) {
+                                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                                }
                                 imageFileStream = new MemoryStream();
                                 bitmap.Save(imageFileStream, ImageFormat.Png);
                                 imageFileStream.Seek(0, SeekOrigin.Begin);
-                            }
-                            if (imageFileStream != null) {
-                                Debug.WriteLine($"Converting {imageFile}...");
-                                var image = Image.GetInstance(imageFileStream);
-                                float height = document.Top - document.TopMargin;
-                                var imageWidth = image.Width > document.Right ? document.Right : image.Width;
-                                var imageHeight = image.Height > height ? height : image.Height;
-                                image.ScaleToFit(imageWidth, imageHeight);
-                                image.Alignment = Element.ALIGN_MIDDLE | Element.ALIGN_CENTER;
-                                document.Add(image);
+
+                                var pdfImage = Image.GetInstance(imageFileStream);
+                                var imageWidth = Math.Min(pdfImage.Width, document.PageSize.Width);
+                                var imageHeight = Math.Min(pdfImage.Height, document.PageSize.Height);
+                                pdfImage.ScaleToFit(imageWidth, imageHeight);
+                                pdfImage.Alignment = Element.ALIGN_MIDDLE | Element.ALIGN_CENTER;
+                                document.Add(pdfImage);
                                 imageFileStream.Close();
                                 retVal++;
                             }
