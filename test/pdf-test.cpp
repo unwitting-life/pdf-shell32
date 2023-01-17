@@ -27,7 +27,7 @@ int main() {
     GetModuleFileName(nullptr, module, ARRAYSIZE(module) - 1);
     iTextSharpWrapperDll = utils::io::path::combine(utils::io::path::GetDirectoryPath(module), ITEXTSHARP_WRAPPER);
 
-    auto imageDirectory = _T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\TOUCH邻家美眉\\第01卷");
+    auto imageDirectory = _T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\哆啦A梦之解谜侦探团");
     auto imageFiles = Json::Value();
     auto index = 0;
     auto imageFilePath = std::wstring();

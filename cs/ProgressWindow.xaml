@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:iTextSharpWrapper"
         mc:Ignorable="d"
         Title=""
-        Width="175"
-        Height="50"
+        Width="200"
+        Height="75"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
@@ -22,9 +22,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <ProgressBar x:Name="progress" Grid.Column="0" Grid.Row="0"/>
         <TextBlock x:Name="percent" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0"/>
-        <TextBlock x:Name="file" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
+        <TextBlock x:Name="pdf" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
+        <TextBlock x:Name="file" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
     </Grid>
 </Window>

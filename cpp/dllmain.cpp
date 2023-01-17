@@ -8,11 +8,6 @@
 #include "resource.h"
 #include <future>
 
-#define JSON_HWND ("hWnd")
-#define JSON_INDEX ("index")
-#define JSON_TOTAL ("total")
-#define JSON_FILE ("file")
-
 typedef int(*Count)(const wchar_t* str);
 typedef const wchar_t* (*Through)(const wchar_t* str);
 typedef const wchar_t* (*GetString)();
@@ -76,8 +71,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
                             auto json = Json::Value();
                             json["imageFiles"] = imageFiles;
                             json["pdfFilePath"] = utils::strings::t2utf8(pdfFilePath);
-                            auto dump = json.toStyledString();
-                            DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PROGRESS), nullptr, DialogProc, reinterpret_cast<LPARAM>(utils::strings::GetBufferA(dump)));
+                            utils::dotnet::clr::invoke(
+                                iTextSharpWrapperDll,
+                                ITEXTSHARP_WRAPPER_CLASS,
+                                ITEXTSHARP_WRAPPER_METHOD,
+                                utils::strings::t2t(json.toStyledString()));
                         }
                     }
                 }
@@ -98,74 +96,4 @@ bool isValidFileName(string_t fileName) {
         utils::strings::equalsIgnoreCase(extensionName, _T(".bmp")) ||
         utils::strings::equalsIgnoreCase(extensionName, _T(".tiff")) ||
         utils::strings::equalsIgnoreCase(extensionName, _T(".png")));
-}
-
-INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    auto retVal = FALSE;
-    switch (uMsg) {
-        case WM_INITDIALOG: {
-            RECT rt = { 0 };
-            if (GetWindowRect(hwndDlg, &rt)) {
-                auto width = rt.right - rt.left;
-                auto height = rt.bottom - rt.top;
-                auto srcWidth = GetSystemMetrics(SM_CXSCREEN);
-                auto srcHeight = GetSystemMetrics(SM_CYSCREEN);
-                MoveWindow(hwndDlg, (srcWidth - width) / 2, (srcHeight - height) / 2, width, height, TRUE);
-            }
-            auto s = reinterpret_cast<char*>(lParam);
-            if (s) {
-                auto json = Json::Value();
-                Json::Reader().parse(s, json);
-                json[JSON_HWND] = __int64(hwndDlg);
-                delete[] s;
-                s = utils::strings::GetBufferA(json.toStyledString());
-                auto dwThreadId = DWORD(0);
-                CloseHandle(CreateThread(nullptr, 0, [](LPVOID lParam) -> DWORD {
-                    auto dump = reinterpret_cast<char*>(lParam);
-                    if (dump) {
-                        auto json = Json::Value();
-                        Json::Reader().parse(dump, json);
-                        auto id = GetCurrentThreadId();
-                        auto hDlg = reinterpret_cast<HWND>(json[JSON_HWND].asInt64());
-                        if (hDlg && utils::io::file::exists(iTextSharpWrapperDll)) {
-                            utils::dotnet::clr::invoke(
-                                iTextSharpWrapperDll,
-                                ITEXTSHARP_WRAPPER_CLASS,
-                                ITEXTSHARP_WRAPPER_METHOD,
-                                utils::strings::t2t(dump));
-                            EndDialog(hDlg, 0);
-                        }
-                        delete[] dump;
-                    }
-                    return 0;
-                }, reinterpret_cast<LPVOID>(s), 0, &dwThreadId));
-                retVal = TRUE;
-            }
-            break;
-        }
-
-        case WM_MOUSEMOVE: {
-            if (wParam & MK_LBUTTON) {
-                PostMessage(hwndDlg, WM_NCLBUTTONDOWN, HTCAPTION, 0);
-            }
-            break;
-        }
-
-        case WM_USER + 1: {
-            auto s = reinterpret_cast<char*>(wParam);
-            if (s) {
-                auto json = Json::Value();
-                Json::Reader().parse(s, json);
-                auto index = json[JSON_INDEX].asInt();
-                auto total = json[JSON_TOTAL].asInt();
-                auto file = json[JSON_FILE].asString();
-                SendMessage(GetDlgItem(hwndDlg, IDC_PROGRESS), PBM_SETRANGE, 0, MAKELPARAM(0, total));
-                SendMessage(GetDlgItem(hwndDlg, IDC_PROGRESS), PBM_SETPOS, index, 0);
-                SetWindowText(GetDlgItem(hwndDlg, IDS_PROGRESS), utils::strings::format(_T("%d%%"), (int)((double)index / total * 100)).c_str());
-                SetWindowText(GetDlgItem(hwndDlg, IDS_FILE), utils::strings::t2t(utils::io::path::GetFileNameA(file)).c_str());
-            }
-            break;
-        }
-    }
-    return retVal;
 }
