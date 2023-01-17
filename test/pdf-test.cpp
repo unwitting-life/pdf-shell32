@@ -9,18 +9,16 @@
 #include "../../cpp-utils/utils.hpp"
 #include "resource.h"
 
-#define PROP_WNDPROC (_T("WNDPROC"))
-#define JSON_KEY_HWND ("hWnd")
-#define JSON_KEY_INDEX ("index")
-#define JSON_KEY_TOTAL ("total")
-#define JSON_KEY_FILE ("file")
+#define JSON_HWND ("hWnd")
+#define JSON_INDEX ("index")
+#define JSON_TOTAL ("total")
+#define JSON_FILE ("file")
 
 auto ITEXTSHARP_WRAPPER = _T("iTextSharpWrapper.dll");
-auto ITEXTSHARP_WRAPPER_CLASS = _T("iTextSharpWrapper.impl");
+auto ITEXTSHARP_WRAPPER_CLASS = _T("iTextSharpWrapper.implement");
 auto ITEXTSHARP_WRAPPER_METHOD = _T("invoke");
 
 INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 TCHAR module[MAX_PATH] = { 0 };
 string_t iTextSharpWrapperDll;
@@ -48,9 +46,12 @@ int main() {
     auto json = Json::Value();
     json["imageFiles"] = imageFiles;
     json["pdfFilePath"] = utils::strings::t2utf8(pdfFilePath);
-    auto dump = json.toStyledString();
-    DialogBoxParam(nullptr, MAKEINTRESOURCE(IDD_PROGRESS), nullptr, DialogProc, reinterpret_cast<LPARAM>(utils::strings::GetBufferA(dump)));
-    std::cout << "Hello World!\\n";
+    utils::dotnet::clr::invoke(
+        iTextSharpWrapperDll,
+        ITEXTSHARP_WRAPPER_CLASS,
+        ITEXTSHARP_WRAPPER_METHOD,
+        utils::strings::t2t(json.toStyledString()));
+    _getch();
 }
 
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -69,7 +70,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             if (s) {
                 auto json = Json::Value();
                 Json::Reader().parse(s, json);
-                json[JSON_KEY_HWND] = __int64(hwndDlg);
+                json[JSON_HWND] = __int64(hwndDlg);
                 delete[] s;
                 s = utils::strings::GetBufferA(json.toStyledString());
                 auto dwThreadId = DWORD(0);
@@ -79,7 +80,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
                     auto json = Json::Value();
                     Json::Reader().parse(dump, json);
                     auto id = GetCurrentThreadId();
-                    auto hDlg = reinterpret_cast<HWND>(json[JSON_KEY_HWND].asInt64());
+                    auto hDlg = reinterpret_cast<HWND>(json[JSON_HWND].asInt64());
                     if (hDlg && utils::io::file::exists(iTextSharpWrapperDll)) {
                         utils::dotnet::clr::invoke(
                             iTextSharpWrapperDll,
@@ -92,9 +93,6 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
                 }
                 return 0;
                 }, reinterpret_cast<LPVOID>(s), 0, &dwThreadId));
-                auto progress = GetDlgItem(hwndDlg, IDS_PROGRESS);
-                auto sytle = SetWindowLongPtr(progress, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WndProc));
-                SetProp(progress, PROP_WNDPROC, reinterpret_cast<HANDLE>(sytle));
                 retVal = TRUE;
             }
             break;
@@ -112,35 +110,18 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             if (s) {
                 auto json = Json::Value();
                 Json::Reader().parse(s, json);
-                auto index = json[JSON_KEY_INDEX].asInt();
-                auto total = json[JSON_KEY_TOTAL].asInt();
-                auto file = json[JSON_KEY_FILE].asString();
+                auto index = json[JSON_INDEX].asInt();
+                auto total = json[JSON_TOTAL].asInt();
+                auto file = json[JSON_FILE].asString();
                 SendMessage(GetDlgItem(hwndDlg, IDC_PROGRESS), PBM_SETRANGE, 0, MAKELPARAM(0, total));
                 SendMessage(GetDlgItem(hwndDlg, IDC_PROGRESS), PBM_SETPOS, index, 0);
-                SetWindowText(GetDlgItem(hwndDlg, IDS_PROGRESS), utils::strings::format(_T("%d%%"), (int)((double)index / total * 100)).c_str());
+              //  SetWindowText(GetDlgItem(hwndDlg, IDS_PROGRESS), utils::strings::format(_T("%d%%"), (int)((double)index / total * 100)).c_str());
                 SetWindowText(GetDlgItem(hwndDlg, IDS_FILE), utils::strings::t2t(utils::io::path::GetFileNameA(file)).c_str());
             }
             break;
         }
     }
     return retVal;
-}
-
-LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wparam, LPARAM lparam) {
-    if (Message == WM_PAINT) {
-        TCHAR s[1000] = { 0 };
-        GetWindowText(hwnd, s, ARRAYSIZE(s) - 1);
-
-        RECT rc = { 0 };
-        PAINTSTRUCT ps = { 0 };
-        HDC hdc = BeginPaint(hwnd, &ps);
-        GetClientRect(hwnd, &rc);
-        SetBkMode(hdc, TRANSPARENT);
-        //DrawText(hdc, s, _tcslen(s), &rc, DT_CENTER | DT_VCENTER);
-        EndPaint(hwnd, &ps);
-        return 0;
-    }
-    return CallWindowProc(reinterpret_cast<WNDPROC>(GetProp(hwnd, PROP_WNDPROC)), hwnd, Message, wparam, lparam);
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

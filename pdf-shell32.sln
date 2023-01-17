@@ -14,18 +14,32 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iTextSharpWrapper", "cs\iTe
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Debug|Any CPU.ActiveCfg = Release|x64
+		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Debug|Any CPU.Build.0 = Release|x64
+		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Debug|x64.ActiveCfg = Release|x64
+		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Debug|x64.Build.0 = Release|x64
 		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Release|Any CPU.ActiveCfg = Release|x64
 		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Release|Any CPU.Build.0 = Release|x64
 		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Release|x64.ActiveCfg = Release|x64
 		{1FEF5D27-0374-451D-B5FD-D3937C9EEAB3}.Release|x64.Build.0 = Release|x64
+		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Debug|Any CPU.ActiveCfg = Release|x64
+		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Debug|Any CPU.Build.0 = Release|x64
+		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Debug|x64.ActiveCfg = Release|x64
+		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Debug|x64.Build.0 = Release|x64
 		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Release|Any CPU.ActiveCfg = Release|x64
 		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Release|Any CPU.Build.0 = Release|x64
 		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Release|x64.ActiveCfg = Release|x64
 		{C93F83A5-37FA-47FD-BD10-AE1E548DDE50}.Release|x64.Build.0 = Release|x64
+		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Debug|x64.ActiveCfg = Release|Any CPU
+		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Debug|x64.Build.0 = Release|Any CPU
 		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BD9A37F-71C5-4779-AA75-1D11FB7426BC}.Release|x64.ActiveCfg = Release|Any CPU

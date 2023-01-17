@@ -11,3 +11,4 @@
 /cpp/pdf-shell32.vcxproj.filters
 /.vs
 /cpp/Resource.aps
+/test/*.aps
