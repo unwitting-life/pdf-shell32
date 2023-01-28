@@ -24,7 +24,15 @@ TCHAR module[MAX_PATH] = { 0 };
 string_t iTextSharpWrapperDll;
 
 int main() {
-    GetModuleFileName(nullptr, module, ARRAYSIZE(module) - 1);
+    auto hBitmap = reinterpret_cast<HBITMAP>(LoadImage(GetModuleHandle(nullptr),
+        MAKEINTRESOURCE(IDB_UNWITTING_LIFE), IMAGE_BITMAP, 0, 0,
+        LR_DEFAULTSIZE | LR_LOADTRANSPARENT | LR_CREATEDIBSECTION));
+    auto transaprent = utils::gdi32::CreateTransparentBitmap(hBitmap);
+    auto hDC = GetDC(nullptr);
+    auto mem = CreateCompatibleDC(hDC);
+    SelectObject(mem, transaprent);
+    BitBlt(hDC, 0, 0, 32, 32, mem, 0, 0, SRCCOPY);
+ /*   GetModuleFileName(nullptr, module, ARRAYSIZE(module) - 1);
     iTextSharpWrapperDll = utils::io::path::combine(utils::io::path::GetDirectoryPath(module), ITEXTSHARP_WRAPPER);
 
     auto imageDirectory = _T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\哆啦A梦之解谜侦探团");
@@ -51,7 +59,7 @@ int main() {
         ITEXTSHARP_WRAPPER_CLASS,
         ITEXTSHARP_WRAPPER_METHOD,
         utils::strings::t2t(json.toStyledString()));
-    _getch();
+    _getch();*/
 }
 
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {

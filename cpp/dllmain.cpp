@@ -35,13 +35,13 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             utils::shell32::init(hModule,
                 [&](std::vector<std::wstring>& files) {
                 HRESULT hr = E_INVALIDARG;
-            for (auto& file : files) {
-                if (isValidFileName(file) || utils::io::directory::exists(file)) {
-                    hr = S_OK;
-                    break;
+                for (auto& file : files) {
+                    if (isValidFileName(file) || utils::io::directory::exists(file)) {
+                        hr = S_OK;
+                        break;
+                    }
                 }
-            }
-            return hr;
+                return hr;
             },
                 [&](std::vector<std::wstring>& files) {
                 if (!files.empty()) {

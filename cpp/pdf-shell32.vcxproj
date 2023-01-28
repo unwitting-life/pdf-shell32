@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="cropped-Nocchi-icon-32x32.bmp" />
+    <Image Include="cropped-Nocchi-icon-32x32.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
