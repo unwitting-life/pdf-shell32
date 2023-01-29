@@ -1,6 +1,11 @@
 ﻿// pdf-test.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
+#ifdef _HAS_STD_BYTE
+#undef _HAS_STD_BYTE
+#endif
+#define _HAS_STD_BYTE 0
+
 #include <iostream>
 
 #define JSON_SUPPORT
@@ -18,48 +23,64 @@ auto ITEXTSHARP_WRAPPER = _T("iTextSharpWrapper.dll");
 auto ITEXTSHARP_WRAPPER_CLASS = _T("iTextSharpWrapper.implement");
 auto ITEXTSHARP_WRAPPER_METHOD = _T("invoke");
 
+bool isConvertibleImageFileName(string_t);
 INT_PTR CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 
 TCHAR module[MAX_PATH] = { 0 };
 string_t iTextSharpWrapperDll;
 
 int main() {
-    auto hBitmap = reinterpret_cast<HBITMAP>(LoadImage(GetModuleHandle(nullptr),
-        MAKEINTRESOURCE(IDB_UNWITTING_LIFE), IMAGE_BITMAP, 0, 0,
-        LR_DEFAULTSIZE | LR_LOADTRANSPARENT | LR_CREATEDIBSECTION));
-    auto transaprent = utils::gdi32::CreateTransparentBitmap(hBitmap);
+#if 0
+    auto hBitmap = utils::gdi32::CreateBitmap(LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON2)), 22, 22);
     auto hDC = GetDC(nullptr);
     auto mem = CreateCompatibleDC(hDC);
-    SelectObject(mem, transaprent);
+    SelectObject(mem, hBitmap);
     BitBlt(hDC, 0, 0, 32, 32, mem, 0, 0, SRCCOPY);
- /*   GetModuleFileName(nullptr, module, ARRAYSIZE(module) - 1);
+#endif
+    GetModuleFileName(nullptr, module, ARRAYSIZE(module) - 1);
     iTextSharpWrapperDll = utils::io::path::combine(utils::io::path::GetDirectoryPath(module), ITEXTSHARP_WRAPPER);
 
-    auto imageDirectory = _T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\哆啦A梦之解谜侦探团");
+    auto files = std::vector<string_t>();
+    files.push_back(_T("E:\\Downloads\\cropped-Nocchi-icon-32x32.bmp"));
+
     auto imageFiles = Json::Value();
     auto index = 0;
+    auto directories = std::vector<std::wstring>();
     auto imageFilePath = std::wstring();
-    for (auto& imageFile : utils::io::directory::GetFiles(imageDirectory)) {
-        auto extensionName = utils::io::path::GetFileExtensionName(imageFile);
-        if (utils::strings::equalsIgnoreCase(extensionName, _T(".webp")) ||
-            utils::strings::equalsIgnoreCase(extensionName, _T(".jpeg")) ||
-            utils::strings::equalsIgnoreCase(extensionName, _T(".png"))) {
-            if (imageFilePath.empty()) {
-                imageFilePath = imageFile;
+    for (auto& file : utils::strings::sort(files)) {
+        if (utils::io::directory::exists(file)) {
+            for (auto& e : utils::io::directory::GetFiles(file)) {
+                if (isConvertibleImageFileName(e)) {
+                    if (imageFilePath.empty()) {
+                        imageFilePath = e;
+                    }
+                    imageFiles[index++] = utils::strings::t2utf8(e);
+                }
             }
-            imageFiles[index++] = utils::strings::t2utf8(imageFile);
+        } else if (isConvertibleImageFileName(file)) {
+            if (imageFilePath.empty()) {
+                imageFilePath = file;
+            }
+            imageFiles[index++] = utils::strings::t2utf8(file);
         }
     }
-    auto pdfFilePath = utils::io::path::combine(imageDirectory, utils::io::path::GetFileNameWithouExtension(imageFilePath)) + _T(".pdf");
-    auto json = Json::Value();
-    json["imageFiles"] = imageFiles;
-    json["pdfFilePath"] = utils::strings::t2utf8(pdfFilePath);
-    utils::dotnet::clr::invoke(
-        iTextSharpWrapperDll,
-        ITEXTSHARP_WRAPPER_CLASS,
-        ITEXTSHARP_WRAPPER_METHOD,
-        utils::strings::t2t(json.toStyledString()));
-    _getch();*/
+    if (!imageFiles.empty()) {
+        auto imageDirectory = utils::io::path::GetDirectoryPath(imageFilePath);
+        auto pdfFilePath = utils::io::path::combine(imageDirectory,
+            imageFiles.size() == 1 ?
+            utils::io::path::GetFileNameWithouExtension(imageFilePath) :
+            utils::io::path::GetFileName(imageDirectory)) + _T(".pdf");
+        auto json = Json::Value();
+        json["imageFiles"] = imageFiles;
+        json["pdfFilePath"] = utils::strings::t2utf8(pdfFilePath);
+        json["paperSize"] = "A5";
+        utils::dotnet::clr::invoke(
+            iTextSharpWrapperDll,
+            ITEXTSHARP_WRAPPER_CLASS,
+            ITEXTSHARP_WRAPPER_METHOD,
+            utils::strings::t2t(json.toStyledString()));
+    }
+    _getch();
 }
 
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -130,6 +151,15 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
         }
     }
     return retVal;
+}
+
+bool isConvertibleImageFileName(string_t fileName) {
+    auto extensionName = utils::io::path::GetFileExtensionName(fileName);
+    return (utils::strings::equalsIgnoreCase(extensionName, _T(".webp")) ||
+        utils::strings::equalsIgnoreCase(extensionName, _T(".jpeg")) ||
+        utils::strings::equalsIgnoreCase(extensionName, _T(".bmp")) ||
+        utils::strings::equalsIgnoreCase(extensionName, _T(".tiff")) ||
+        utils::strings::equalsIgnoreCase(extensionName, _T(".png")));
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

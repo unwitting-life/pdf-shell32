@@ -3,7 +3,7 @@
 // π© Resource.rc  π”√
 //
 #define IDD_PROGRESS                    102
-#define IDB_UNWITTING_LIFE              110
+#define IDI_UNWITTING_LIFE              119
 #define IDC_PROGRESS                    1001
 #define IDS_PROGRESS                    1002
 #define IDS_FILE                        1003
@@ -12,7 +12,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        116
+#define _APS_NEXT_RESOURCE_VALUE        120
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           101

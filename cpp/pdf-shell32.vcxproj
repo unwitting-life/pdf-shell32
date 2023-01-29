@@ -58,8 +58,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>$(SolutionDir)kill-explorer.cmd</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -82,6 +81,7 @@
   <ItemGroup>
     <Image Include="cropped-Nocchi-icon-32x32.bmp" />
     <Image Include="cropped-Nocchi-icon-32x32.png" />
+    <Image Include="favicon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
