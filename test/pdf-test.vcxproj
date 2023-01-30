@@ -64,10 +64,8 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\cpp\bitmap2.bmp" />
-    <Image Include="..\cpp\cropped-Nocchi-icon-32x32.bmp" />
     <Image Include="..\cpp\favicon.ico" />
-    <Image Include="..\cpp\icon1.ico" />
+    <Image Include="..\cpp\pdf-shell32.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

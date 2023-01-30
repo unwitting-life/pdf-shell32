@@ -23,6 +23,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>res\pdf-shell32.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="args.cs" />
     <Compile Include="implement.cs" />

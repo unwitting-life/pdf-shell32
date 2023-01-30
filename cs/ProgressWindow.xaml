@@ -4,6 +4,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                 xmlns:system="clr-namespace:System;assembly=mscorlib"
                  xmlns:local="clr-namespace:iTextSharpWrapper"
                  mc:Ignorable="d"
                  Title="pdf-shell32"
@@ -13,7 +14,11 @@
                  WindowStartupLocation="CenterScreen"
                  ResizeMode="NoResize"
                  ShowInTaskbar="False"
-                 Topmost="True" Icon="/iTextSharpWrapper;component/res/pdf-shell32.ico"
+                 Topmost="True" 
+                 Icon="/iTextSharpWrapper;component/res/pdf-shell32.ico"
+                 FontFamily="SimSun"
+                 GlowBrush="Black"
+                 BorderThickness="0"
                  Loaded="MetroWindow_Loaded"
                  Closing="MetroWindow_Closing">
     <mah:MetroWindow.Resources>
@@ -21,11 +26,26 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.FlatButton.xaml" />-->
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Orange.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.FlatButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <system:Double x:Key="WindowTitleFontSize">12</system:Double>
+            <FontFamily x:Key="HeaderFontFamily">SimSun</FontFamily>
         </ResourceDictionary>
     </mah:MetroWindow.Resources>
+
+    <!-- https://stackoverflow.com/questions/33712214/how-to-change-fontweigth-of-window-title-in-mahapps-metrowindow -->
+    <mah:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <TextBlock Text="{TemplateBinding Content}"
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center"
+                   Margin="8 -1 8 0"
+                   FontWeight="Light"
+                   FontSize="{DynamicResource WindowTitleFontSize}"
+                   FontFamily="{DynamicResource HeaderFontFamily}" />
+        </DataTemplate>
+    </mah:MetroWindow.TitleTemplate>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -36,7 +56,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <mah:MetroProgressBar x:Name="progress" Grid.Column="0" Grid.Row="0"
+        <mah:MetroProgressBar x:Name="progress" 
+                              Grid.Column="0"
+                              Grid.Row="0"
+                              BorderBrush="#1F00589F"
+                              BorderThickness="0.5"
                               Minimum="0"
                               Maximum="100"/>
         <TextBlock x:Name="percent" 
@@ -47,8 +71,20 @@
                    VerticalAlignment="Center"
                    Margin="10,0,0,0"/>
         <TextBlock x:Name="file" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
+        <TextBlock Grid.Column="0" 
+                   Grid.ColumnSpan="2" 
+                   Grid.Row="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom">    
+            开源及使用许可: 
+            <Hyperlink NavigateUri="https://github.com/unwitting-life/pdf-shell32"
+                       RequestNavigate="Hyperlink_RequestNavigate"
+                       Foreground="Blue">
+                pdf-shell32
+            </Hyperlink>
+        </TextBlock>
         <Button x:Name="btnCancel" 
-                Content="Cancel"
+                Content="取消(_C)"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Grid.Row="2"

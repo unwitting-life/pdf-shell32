@@ -31,7 +31,7 @@ string_t iTextSharpWrapperDll;
 
 int main() {
 #if 0
-    auto hBitmap = utils::gdi32::CreateBitmap(LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON2)), 22, 22);
+    auto hBitmap = utils::gdi32::CreateBitmap(LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_UNWITTING_LIFE)), 22, 22);
     auto hDC = GetDC(nullptr);
     auto mem = CreateCompatibleDC(hDC);
     SelectObject(mem, hBitmap);
@@ -42,6 +42,7 @@ int main() {
 
     auto files = std::vector<string_t>();
     files.push_back(_T("E:\\Downloads\\cropped-Nocchi-icon-32x32.bmp"));
+    files.push_back(_T("D:\\.sources\\github.com\\unwitting-life\\manhuagui.com\\manhuagui.com\\哆啦A梦：超棒球外传"));
 
     auto imageFiles = Json::Value();
     auto index = 0;
