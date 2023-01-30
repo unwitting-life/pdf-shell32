@@ -1,6 +1,6 @@
 # pdf-shell32
 # OVERVIEW
-* A lightweight PDF format conversion program, can quickly specify the file or folder in the picture into a PDF file
+* A lightweight PDF format conversion windows explorer shell, fast convert image files or directories into one PDF file.
 # PREVIEW
 ![Windows Explorer Menu](preview.png "pdf-shell32")
 # LICENSE
